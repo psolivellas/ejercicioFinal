@@ -70,6 +70,8 @@ extern uint8_t teclado_getFlancos(void);
 
 extern void teclado_task(void);
 
+extern void procesarTeclasModBus(uint8_t value);
+
 /*==================[cplusplus]==============================================*/
 #ifdef __cplusplus
 }

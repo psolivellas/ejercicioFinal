@@ -108,8 +108,6 @@ extern void teclado_task(void)
 
    /* guarda el nuevo estado de las teclas */
    estadoTeclas = inputs;
-
-   TerminateTask();
 }
 
 extern uint8_t teclado_getFlancos(void)
@@ -119,6 +117,14 @@ extern uint8_t teclado_getFlancos(void)
    teclasFlancoUP = 0;
 
    return ret;
+}
+
+
+
+extern void procesarTeclasModBus(uint8_t value)
+{
+   //
+   teclasFlancoUP = value;
 }
 
 

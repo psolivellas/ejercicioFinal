@@ -16,17 +16,104 @@ OSEK OSEK {
    EVENT = POSIXE;
    RESOURCE = POSIXR;
    RESOURCE = MODBUSR;
+   RESOURCE = BLOCK;
+   
    
    TASK InitTask {
-      PRIORITY = 5;
+      PRIORITY = 10;
       ACTIVATION = 1;
       AUTOSTART = TRUE {
          APPMODE = AppMode1;
       }
       STACK = 512;
       TYPE = BASIC;
+      RESOURCE = POSIXR;
+      RESOURCE = MODBUSR;
       SCHEDULE = NON;
    };
+
+
+
+
+   TASK ledBlink {
+      PRIORITY = 5;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      EVENT = POSIXE;
+      RESOURCE = POSIXR;
+      RESOURCE = BLOCK;
+      SCHEDULE = FULL;
+   };
+
+   ALARM ledBlinkAlarm {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ledBlink;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 0;
+         CYCLETIME = 10;
+      };
+   };
+
+
+
+   TASK LecturaTecladoTask {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      EVENT = POSIXE;
+      RESOURCE = POSIXR;
+      RESOURCE = BLOCK;
+      SCHEDULE = FULL;
+   };
+
+   ALARM LecturaTecladoTaskAlarm {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = LecturaTecladoTask;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 1;
+         CYCLETIME = 5;
+      };
+
+   };
+   
+   
+   
+   TASK modBusTask {
+      PRIORITY = 2;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      EVENT = POSIXE;
+      RESOURCE = MODBUSR;
+      RESOURCE = POSIXR;
+      SCHEDULE = FULL;
+   };
+
+   ALARM modBusTaskAlarm {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = modBusTask;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 2;
+         CYCLETIME = 5;
+      };
+
+   };
+
+
+
+
+
 
    COUNTER HardwareCounter {
       MAXALLOWEDVALUE = 1000;
@@ -36,5 +123,24 @@ OSEK OSEK {
       COUNTER = HWCOUNTER0;
    };
 
+
+
+   ISR UART0_IRQHandler {
+      INTERRUPT = UART0;
+      CATEGORY = 2;
+     PRIORITY = 0;
+   };
+
+   ISR UART2_IRQHandler {
+      INTERRUPT = UART2;
+      CATEGORY = 2;
+      PRIORITY = 0;
+   };
+
+   ISR UART3_IRQHandler {
+      INTERRUPT = UART3;
+      CATEGORY = 2;
+      PRIORITY = 0;
+   };
    
 };

@@ -69,9 +69,10 @@
  */
 
 /*==================[inclusions]=============================================*/
+#include "../../ejercicioFinal/inc/leds.h"
+
 #include "os.h"
 #include "ciaak.h"
-#include "leds.h"
 
 /*==================[macros and definitions]=================================*/
 
@@ -96,27 +97,52 @@ extern void leds_init(void)
 
 extern void leds_toggle(uint8_t mask)
 {
+   //
+   uint8_t outputs;
 
+   /* lee el estado de las salidas */
+   ciaaPOSIX_read(fd_out, &outputs, 1);
+   outputs ^= mask;
+   ciaaPOSIX_write(fd_out, &outputs, 1);
 }
 
 extern void leds_on(uint8_t mask)
 {
+   //
+   uint8_t outputs;
 
+   /* lee el estado de las salidas */
+   ciaaPOSIX_read(fd_out, &outputs, 1);
+   outputs |= mask;
+   ciaaPOSIX_write(fd_out, &outputs, 1);
 }
 
 extern void leds_off(uint8_t mask)
 {
+   // 1 0 0 1 0 0
+   // 0 1 0 1 0 0
+   //
 
 }
 
 extern uint8_t leds_get(void)
 {
+   uint8_t outputs;
 
+   /* lee el estado de las salidas */
+   ciaaPOSIX_read(fd_out, &outputs, 1);
+
+   return outputs;
 }
 
+//Setea la máscara tiltLed
 extern void leds_set(uint8_t value)
 {
+   uint8_t outputs;
 
+   outputs = value;
+
+   ciaaPOSIX_write(fd_out, &outputs, 1);
 }
 
 /** @} doxygen end group definition */

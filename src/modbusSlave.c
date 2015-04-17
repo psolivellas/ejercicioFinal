@@ -69,9 +69,10 @@
  */
 
 /*==================[inclusions]=============================================*/
+#include "../../ejercicioFinal/inc/leds.h"
+#include "../../ejercicioFinal/inc/teclado.h"
 #include "os.h"
 #include "ciaak.h"
-#include "leds.h"
 #include "ciaaModbus.h"
 
 /*==================[macros and definitions]=================================*/
@@ -139,7 +140,7 @@ static uint16_t cmd0x03ReadHoldingReg(
       {
          /* estado de los leds */
          case MODBUS_ADDRESS_ESTADO_LEDS:
-            temp16u = leds_get();
+            temp16u = leds_get(); //<------- Devolver estado de los leds!
             ciaaModbus_writeInt(buf, temp16u);
             quantityRegProcessed = 1;
             break;
@@ -198,15 +199,15 @@ static void cmd0x10WriteMultipleReg(
       {
          /* escritura de estado de teclas */
          case MODBUS_ADDRESS_TECLADO_REMOTO:
-            temp16u = ciaaModbus_readInt(buf);
-            //procesarTeclas(temp16u);
+            temp16u = ciaaModbus_readInt(buf);  // Recibe las teclas pulsadas en el Master
+            //procesarTeclasModBus(temp16u);      // <--- Implementar!!!
             quantityRegProcessed = 1;
             break;
 
          /* escritura de leds */
          case MODBUS_ADDRESS_ESTADO_LEDS:
             temp16u = ciaaModbus_readInt(buf);
-            leds_set(temp16u);
+            leds_set(temp16u); // <----------- Setea la Máscara de los leds desde el Master
             quantityRegProcessed = 1;
             break;
 
@@ -245,8 +246,6 @@ extern void modbusSlave_init(void)
 {
    int32_t fdSerialPort;
 
-   ciaak_start();
-
    fdSerialPort = ciaaPOSIX_open("/dev/serial/uart/0", O_RDWR | O_NONBLOCK);
 
    /* Open Modbus Slave */
@@ -278,10 +277,12 @@ extern void modbusSlave_init(void)
  * esta funcion debe ser llamada por una tarea con un período
  * de 5 ms.
  */
-extern void modbusSlave_task(void)
+extern void modbusSlave_task(void) //<--- Llamar cada 5ms
 {
    ciaaModbus_gatewayMainTask(hModbusGateway);
 }
+
+
 
 
 /** @} doxygen end group definition */
