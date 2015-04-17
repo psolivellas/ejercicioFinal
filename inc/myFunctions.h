@@ -68,6 +68,7 @@ uint8_t teclas;
  */
 //extern void procesarTeclasModBus(uint8_t value);
 
+
 extern void procesarTeclas(uint8_t teclas);
 
 

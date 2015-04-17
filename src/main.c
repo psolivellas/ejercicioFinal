@@ -145,7 +145,7 @@ void initMyVariables(void)
 
    tiltCounter = 0;
 
-   /* escribe el nuevo estado de las salidas */
+   //Write the led register
    ciaaPOSIX_write(fd_out, &tiltLed, 1);
 }
 
@@ -179,7 +179,7 @@ TASK(ledBlink)
 
    if (tiltCounter >= tiltFrec)
    {
-      /* lee el estado de las salidas */
+      //Read the led register status
       outputs ^= tiltLed;
       ciaaPOSIX_write(fd_out, &outputs, 1);
 

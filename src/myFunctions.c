@@ -94,27 +94,16 @@ static uint8_t teclasFlancoUP;
 
 
 
-
-/*
-extern void procesarTeclasModBus(uint8_t value)
-{
-   //
-   GetResource(BLOCK);
-
-   tiltLed = (value & 0B00111111);
-
-   ReleaseResource(BLOCK);
-}
-*/
-
 extern void procesarTeclas(uint8_t teclas)
 {
+   GetResource(BLOCK);
+
    uint8_t outputs;
 
    // si se oprime la tecla parpadea el led
    if (TECLADO_TEC1_BIT & teclas)
    {
-      //Gira a la izquierda
+      //Turn Left
       if (tiltLed != 0B000001)
       {
          tiltLed = (tiltLed >> 1);
@@ -124,14 +113,13 @@ extern void procesarTeclas(uint8_t teclas)
          tiltLed = 0B100000;
       }
 
-      // escribe el nuevo estado de las salidas
+      // Writhe the new state to the register
       ciaaPOSIX_write(fd_out, &tiltLed, 1);
    }
 
-   // si se oprime la tecla parpadea el led
    if (TECLADO_TEC2_BIT & teclas)
    {
-      //Gira a la derecha
+      //Turn right
       if (tiltLed != 0B100000)
       {
          tiltLed = (tiltLed << 1);
@@ -141,7 +129,7 @@ extern void procesarTeclas(uint8_t teclas)
          tiltLed = 0B000001;
       }
 
-      // escribe el nuevo estado de las salidas
+      // Writhe the new state to the register
       ciaaPOSIX_write(fd_out, &tiltLed, 1);
    }
 
@@ -149,14 +137,14 @@ extern void procesarTeclas(uint8_t teclas)
    // si se oprime la tecla 4 Decrementa la frecuencia de parpade0 del led
    if (TECLADO_TEC3_BIT & teclas)
    {
-      GetResource(BLOCK);
-
       //Decrementa frecuencia
       if (tiltFrec >= 1000)
       {
-         //do Nothing, you cant decrement your frec. less than 100ms.
+         //do Nothing, you can't decrement your frec. less than 100ms.
          tiltFrec = 1000;
 
+         // Indicate that the minimun value has been reached.
+         // The led is turned off in the ledBlink task.
          ciaaPOSIX_read(fd_out, &outputs, 1);
          outputs ^= 0B00000111;
          ciaaPOSIX_write(fd_out, &outputs, 1);
@@ -165,21 +153,19 @@ extern void procesarTeclas(uint8_t teclas)
       {
          tiltFrec += 100;
       }
-
-      ReleaseResource(BLOCK);
    }
 
-   // si se oprime la tecla 4 Incrementa la frecuencia de parpade0 del led
+   // Led blinking frecuency increment
    if (TECLADO_TEC4_BIT & teclas)
    {
-      GetResource(BLOCK);
-
-      //Incrementa Frecuencia
+      //Frecuency incrementation (100 ms)
       if (tiltFrec <= 100)
       {
          //do Nothing, you cant increment your frec. over than 1000ms.
          tiltFrec = 100;
 
+         // Indicate that the minimun value has been reached.
+         // The led is turned off in the ledBlink task.
          ciaaPOSIX_read(fd_out, &outputs, 1);
          outputs ^= 0B00000111;
          ciaaPOSIX_write(fd_out, &outputs, 1);
@@ -188,9 +174,9 @@ extern void procesarTeclas(uint8_t teclas)
       {
          tiltFrec -= 100;
       }
-
-      ReleaseResource(BLOCK);
    }
+
+   ReleaseResource(BLOCK);
 }
 
 
