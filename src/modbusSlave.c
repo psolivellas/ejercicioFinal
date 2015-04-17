@@ -200,7 +200,7 @@ static void cmd0x10WriteMultipleReg(
          /* escritura de estado de teclas */
          case MODBUS_ADDRESS_TECLADO_REMOTO:
             temp16u = ciaaModbus_readInt(buf);  // Recibe las teclas pulsadas en el Master
-            //procesarTeclasModBus(temp16u);      // <--- Implementar!!!
+            procesarTeclasModBus(temp16u);      // <--- Implementar!!!
             quantityRegProcessed = 1;
             break;
 
