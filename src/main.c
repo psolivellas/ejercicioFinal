@@ -180,7 +180,6 @@ TASK(ledBlink)
    if (tiltCounter >= tiltFrec)
    {
       /* lee el estado de las salidas */
-      //ciaaPOSIX_read(fd_out, &outputs, 1);
       outputs ^= tiltLed;
       ciaaPOSIX_write(fd_out, &outputs, 1);
 
@@ -207,101 +206,14 @@ TASK(ledBlink)
 
 TASK(LecturaTecladoTask)
 {
-   /*
-   uint8_t teclas;
-   uint8_t outputs;
-*/
-
-   /* lee los flancos de las teclas */
-  // teclas = teclado_getFlancos();
-
    //
    teclado_task();
 
+   // lee los flancos de las teclas
+   teclas = teclado_getFlancos();
 
-   procesarTeclas();
+   procesarTeclas(teclas);
 
-   /* si se oprime la tecla parpadea el led */
-/*   if (TECLADO_TEC1_BIT & teclas)
-   {
-      //Gira a la izquierda
-      if (tiltLed != 0B000001)
-      {
-         tiltLed = (tiltLed >> 1);
-      }
-      else
-      {
-         tiltLed = 0B100000;
-      }
-
-      // escribe el nuevo estado de las salidas
-      ciaaPOSIX_write(fd_out, &tiltLed, 1);
-   }
-
-   // si se oprime la tecla parpadea el led
-   if (TECLADO_TEC2_BIT & teclas)
-   {
-      //Gira a la derecha
-      if (tiltLed != 0B100000)
-      {
-         tiltLed = (tiltLed << 1);
-      }
-      else
-      {
-         tiltLed = 0B000001;
-      }
-
-      // escribe el nuevo estado de las salidas
-      ciaaPOSIX_write(fd_out, &tiltLed, 1);
-   }
-
-
-   // si se oprime la tecla 4 Decrementa la frecuencia de parpade0 del led
-   if (TECLADO_TEC3_BIT & teclas)
-   {
-      GetResource(BLOCK);
-
-      //Decrementa frecuencia
-      if (tiltFrec >= 1000)
-      {
-         //do Nothing, you cant decrement your frec. less than 100ms.
-         tiltFrec = 1000;
-
-         ciaaPOSIX_read(fd_out, &outputs, 1);
-         outputs ^= 0B00000111;
-         ciaaPOSIX_write(fd_out, &outputs, 1);
-      }
-      else
-      {
-         tiltFrec += 100;
-      }
-
-      ReleaseResource(BLOCK);
-   }
-
-   //si se oprime la tecla 4 Incrementa la frecuencia de parpade0 del led
-   if (TECLADO_TEC4_BIT & teclas)
-   {
-      GetResource(BLOCK);
-
-      //Incrementa Frecuencia
-      if (tiltFrec <= 100)
-      {
-         //do Nothing, you cant increment your frec. over than 1000ms.
-         tiltFrec = 100;
-
-         ciaaPOSIX_read(fd_out, &outputs, 1);
-         outputs ^= 0B00000111;
-         ciaaPOSIX_write(fd_out, &outputs, 1);
-      }
-      else
-      {
-         tiltFrec -= 100;
-      }
-
-      ReleaseResource(BLOCK);
-   }
-  */
 
    TerminateTask();
 }

@@ -46,6 +46,7 @@ extern "C" {
 int32_t fd_out;
 uint8_t tiltLed;
 int tiltCounter, tiltFrec;
+uint8_t teclas;
 
 /*==================[external functions declaration]=========================*/
 
@@ -65,9 +66,9 @@ int tiltCounter, tiltFrec;
  *
  * \remarks Cuando se ejecuta esta función se ponen a cero todos los flancos
  */
-extern void procesarTeclasModBus(uint8_t value);
+//extern void procesarTeclasModBus(uint8_t value);
 
-extern void procesarTeclas();
+extern void procesarTeclas(uint8_t teclas);
 
 
 /*==================[cplusplus]==============================================*/

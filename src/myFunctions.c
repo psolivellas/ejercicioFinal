@@ -82,7 +82,6 @@
 static int32_t fd_in;
 static uint8_t estadoTeclas;
 static uint8_t teclasFlancoUP;
-
 /*==================[internal functions declaration]=========================*/
 
 /*==================[internal data definition]===============================*/
@@ -96,7 +95,7 @@ static uint8_t teclasFlancoUP;
 
 
 
-
+/*
 extern void procesarTeclasModBus(uint8_t value)
 {
    //
@@ -106,19 +105,13 @@ extern void procesarTeclasModBus(uint8_t value)
 
    ReleaseResource(BLOCK);
 }
+*/
 
-
-extern void procesarTeclas()
+extern void procesarTeclas(uint8_t teclas)
 {
-   uint8_t teclas;
    uint8_t outputs;
 
-   //
-   /* lee los flancos de las teclas */
-   teclas = teclado_getFlancos();
-
-
-   /* si se oprime la tecla parpadea el led */
+   // si se oprime la tecla parpadea el led
    if (TECLADO_TEC1_BIT & teclas)
    {
       //Gira a la izquierda
@@ -131,11 +124,11 @@ extern void procesarTeclas()
          tiltLed = 0B100000;
       }
 
-      /* escribe el nuevo estado de las salidas */
+      // escribe el nuevo estado de las salidas
       ciaaPOSIX_write(fd_out, &tiltLed, 1);
    }
 
-   /* si se oprime la tecla parpadea el led */
+   // si se oprime la tecla parpadea el led
    if (TECLADO_TEC2_BIT & teclas)
    {
       //Gira a la derecha
@@ -148,12 +141,12 @@ extern void procesarTeclas()
          tiltLed = 0B000001;
       }
 
-      /* escribe el nuevo estado de las salidas */
+      // escribe el nuevo estado de las salidas
       ciaaPOSIX_write(fd_out, &tiltLed, 1);
    }
 
 
-   /* si se oprime la tecla 4 Decrementa la frecuencia de parpade0 del led */
+   // si se oprime la tecla 4 Decrementa la frecuencia de parpade0 del led
    if (TECLADO_TEC3_BIT & teclas)
    {
       GetResource(BLOCK);
@@ -176,7 +169,7 @@ extern void procesarTeclas()
       ReleaseResource(BLOCK);
    }
 
-   /* si se oprime la tecla 4 Incrementa la frecuencia de parpade0 del led */
+   // si se oprime la tecla 4 Incrementa la frecuencia de parpade0 del led
    if (TECLADO_TEC4_BIT & teclas)
    {
       GetResource(BLOCK);
