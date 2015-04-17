@@ -100,8 +100,11 @@ static uint8_t teclasFlancoUP;
 extern void procesarTeclasModBus(uint8_t value)
 {
    //
-   tiltLed = value;
+   GetResource(BLOCK);
 
+   tiltLed = (value & 0B00111111);
+
+   ReleaseResource(BLOCK);
 }
 
 

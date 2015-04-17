@@ -175,14 +175,23 @@ TASK(ledBlink)
 
    GetResource(BLOCK);
 
+   ciaaPOSIX_read(fd_out, &outputs, 1);
+
    if (tiltCounter >= tiltFrec)
    {
       /* lee el estado de las salidas */
-      ciaaPOSIX_read(fd_out, &outputs, 1);
+      //ciaaPOSIX_read(fd_out, &outputs, 1);
       outputs ^= tiltLed;
       ciaaPOSIX_write(fd_out, &outputs, 1);
 
       tiltCounter = 0;
+   }
+   else if ( (outputs & 0B00000111) == 0B00000111)
+   {
+      //
+      ciaaPOSIX_read(fd_out, &outputs, 1);
+      outputs ^= 0B00000111;
+      ciaaPOSIX_write(fd_out, &outputs, 1);
    }
    else
    {
