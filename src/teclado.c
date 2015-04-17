@@ -120,13 +120,13 @@ extern uint8_t teclado_getFlancos(void)
 }
 
 
-
+/*
 extern void procesarTeclasModBus(uint8_t value)
 {
    //
    teclasFlancoUP = value;
 }
-
+*/
 
 /** @} doxygen end group definition */
 /** @} doxygen end group definition */

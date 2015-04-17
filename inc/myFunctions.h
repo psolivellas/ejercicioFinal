@@ -5,8 +5,8 @@
  */
 
 
-#ifndef TECLADO_H
-#define TECLADO_H
+#ifndef MYFUNCTIONS_H
+#define MYFUNCTIONS_H
 /** \brief Short description of this file
  **
  ** Long description of this file
@@ -38,14 +38,14 @@ extern "C" {
 #endif
 
 /*==================[macros]=================================================*/
-#define TECLADO_TEC1_BIT         0B0001
-#define TECLADO_TEC2_BIT         0B0010
-#define TECLADO_TEC3_BIT         0B0100
-#define TECLADO_TEC4_BIT         0B1000
 
 /*==================[typedef]================================================*/
 
 /*==================[external data declaration]==============================*/
+//NO SE PUEDEN DECLARAR static LAS VARIABLES ACÁ!!!!!!
+int32_t fd_out;
+uint8_t tiltLed;
+int tiltCounter, tiltFrec;
 
 /*==================[external functions declaration]=========================*/
 
@@ -56,7 +56,6 @@ extern "C" {
  * \returns
  *
  */
-extern void teclado_init(void);
 
 /** \brief Teclado Get Flancos
  *
@@ -66,11 +65,10 @@ extern void teclado_init(void);
  *
  * \remarks Cuando se ejecuta esta función se ponen a cero todos los flancos
  */
-extern uint8_t teclado_getFlancos(void);
+extern void procesarTeclasModBus(uint8_t value);
 
-extern void teclado_task(void);
+extern void procesarTeclas();
 
-//extern void procesarTeclasModBus(uint8_t value);
 
 /*==================[cplusplus]==============================================*/
 #ifdef __cplusplus

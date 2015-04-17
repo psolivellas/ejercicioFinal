@@ -69,21 +69,22 @@
  */
 
 /*==================[inclusions]=============================================*/
-#include "../../ejercicioFinal/inc/leds.h"
-#include "../../ejercicioFinal/inc/modbusSlave.h"
+#include "os.h"
+#include "ciaak.h"
+
 #include "../../ejercicioFinal/inc/teclado.h"
 #include "../../ejercicioFinal/inc/myFunctions.h"
 
-#include "os.h"
-#include "ciaak.h"
 /*==================[macros and definitions]=================================*/
+#define TECLADO_TOTAL_TECLAS     4
 
 /*==================[internal data declaration]==============================*/
-/*static int32_t fd_out;
-static uint8_t tiltLed;
-static int tiltCounter, tiltFrec;*/
+static int32_t fd_in;
+static uint8_t estadoTeclas;
+static uint8_t teclasFlancoUP;
+
 /*==================[internal functions declaration]=========================*/
-void initMyVariables(void);
+
 /*==================[internal data definition]===============================*/
 
 /*==================[external data definition]===============================*/
@@ -92,128 +93,30 @@ void initMyVariables(void);
 
 /*==================[external functions definition]==========================*/
 
-/** \brief Error Hook function
- *
- * This fucntion is called from the os if an os interface (API) returns an
- * error. Is for debugging proposes. If called this function triggers a
- * ShutdownOs which ends in a while(1).
- *
- * The values:
- *    OSErrorGetServiceId
- *    OSErrorGetParam1
- *    OSErrorGetParam2
- *    OSErrorGetParam3
- *    OSErrorGetRet
- *
- * will provide you the interface, the input parameters and the returned value.
- * For more details see the OSEK specification:
- * http://portal.osek-vdx.org/files/pdf/specs/os223.pdf
- *
- */
-void ErrorHook(void)
-{
-   ciaaPOSIX_printf("ErrorHook was called\n");
-   ciaaPOSIX_printf("Service: %d, P1: %d, P2: %d, P3: %d, RET: %d\n", OSErrorGetServiceId(), OSErrorGetParam1(), OSErrorGetParam2(), OSErrorGetParam3(), OSErrorGetRet());
-   ShutdownOS(0);
-}
-
-/** \brief Main function
- *
- * This is the main entry point of the software.
- *
- * \returns 0
- *
- * \remarks This function never returns. Return value is only to avoid compiler
- *          warnings or errors.
- */
-int main(void)
-{
-   /* Starts the operating system in the Application Mode 1 */
-   /* This example has only one Application Mode */
-   StartOS(AppMode1);
-
-   /* StartOs shall never returns, but to avoid compiler warnings or errors
-    * 0 is returned */
-   return 0;
-}
-
-void initMyVariables(void)
-{
-   tiltLed = 0B100000;
-
-   tiltFrec = 100;
-
-   tiltCounter = 0;
-
-   /* escribe el nuevo estado de las salidas */
-   ciaaPOSIX_write(fd_out, &tiltLed, 1);
-}
-
-
-TASK(InitTask)
-{
-   ciaak_start();
-
-   leds_init();
-
-   teclado_init();
-
-   modbusSlave_init();
-
-   initMyVariables();
-
-
-   TerminateTask();
-}
 
 
 
-TASK(ledBlink)
+
+extern void procesarTeclasModBus(uint8_t value)
 {
    //
-   uint8_t outputs;
+   tiltLed = value;
 
-   GetResource(BLOCK);
-
-   if (tiltCounter >= tiltFrec)
-   {
-      /* lee el estado de las salidas */
-      ciaaPOSIX_read(fd_out, &outputs, 1);
-      outputs ^= tiltLed;
-      ciaaPOSIX_write(fd_out, &outputs, 1);
-
-      tiltCounter = 0;
-   }
-   else
-   {
-      tiltCounter += 10;
-   }
-
-   ReleaseResource(BLOCK);
-
-   TerminateTask();
 }
 
 
-
-TASK(LecturaTecladoTask)
+extern void procesarTeclas()
 {
-   /*
    uint8_t teclas;
    uint8_t outputs;
-*/
-
-   /* lee los flancos de las teclas */
-  // teclas = teclado_getFlancos();
 
    //
-   teclado_task();
+   /* lee los flancos de las teclas */
+   teclas = teclado_getFlancos();
 
-
-   procesarTeclas();
 
    /* si se oprime la tecla parpadea el led */
-/*   if (TECLADO_TEC1_BIT & teclas)
+   if (TECLADO_TEC1_BIT & teclas)
    {
       //Gira a la izquierda
       if (tiltLed != 0B000001)
@@ -225,11 +128,11 @@ TASK(LecturaTecladoTask)
          tiltLed = 0B100000;
       }
 
-      // escribe el nuevo estado de las salidas
+      /* escribe el nuevo estado de las salidas */
       ciaaPOSIX_write(fd_out, &tiltLed, 1);
    }
 
-   // si se oprime la tecla parpadea el led
+   /* si se oprime la tecla parpadea el led */
    if (TECLADO_TEC2_BIT & teclas)
    {
       //Gira a la derecha
@@ -242,12 +145,12 @@ TASK(LecturaTecladoTask)
          tiltLed = 0B000001;
       }
 
-      // escribe el nuevo estado de las salidas
+      /* escribe el nuevo estado de las salidas */
       ciaaPOSIX_write(fd_out, &tiltLed, 1);
    }
 
 
-   // si se oprime la tecla 4 Decrementa la frecuencia de parpade0 del led
+   /* si se oprime la tecla 4 Decrementa la frecuencia de parpade0 del led */
    if (TECLADO_TEC3_BIT & teclas)
    {
       GetResource(BLOCK);
@@ -270,7 +173,7 @@ TASK(LecturaTecladoTask)
       ReleaseResource(BLOCK);
    }
 
-   //si se oprime la tecla 4 Incrementa la frecuencia de parpade0 del led
+   /* si se oprime la tecla 4 Incrementa la frecuencia de parpade0 del led */
    if (TECLADO_TEC4_BIT & teclas)
    {
       GetResource(BLOCK);
@@ -292,22 +195,7 @@ TASK(LecturaTecladoTask)
 
       ReleaseResource(BLOCK);
    }
-  */
-
-   TerminateTask();
 }
-
-
-
-TASK(modBusTask)
-{
-   //
-   modbusSlave_task();
-
-
-   TerminateTask();
-}
-
 
 
 /** @} doxygen end group definition */
